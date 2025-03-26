@@ -1,9 +1,9 @@
 class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
-        self.tag = tag
-        self.value = value
-        self.children = children
-        self.props = props
+        self.tag = tag # html tag
+        self.value = value # str
+        self.children = children # list of objects
+        self.props = props # dict
 
     def to_html(self):
         raise NotImplementedError("to_html method not implemented")
@@ -32,3 +32,21 @@ class LeafNode(HTMLNode):
 
     def __repr__(self):
         return f"LeafNode({self.tag}, {self.value}, {self.props})"
+
+class ParentNode(HTMLNode):
+    def __init__(self, tag, children, props=None):
+        super().__init__(tag, None, children, props)
+
+    def to_html(self):
+        if self.tag == None:
+            raise ValueError("invalid HTML: missing tag")
+        if self.children == None:
+            raise ValueError("invalid HTML: no children found")
+        children = ""
+        for child in self.children:
+            children += child.to_html()
+        
+        return f"<{self.tag}>{children}</{self.tag}>"
+
+    def __repr__(self):
+        return f"ParentNode({self.tag}, children: {self.children}, {self.props})"
